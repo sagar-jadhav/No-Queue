@@ -13,7 +13,7 @@ ibmcloud target -o <ORG>
 ibmcloud target -s <SPACE>
 ```
 
-## Downloaf KUBECONFIG
+## Download KUBECONFIG
 
 ```
 ibmcloud ks cluster config --cluster <CLUSTER_ID>
