@@ -189,18 +189,20 @@ function create(name, owner_id, contact_no, category, sub_category, queue_capaci
  * 
  * The following parameters can be null
  * 
- * @param {String} type - the type of the item
- * @param {String} name - the name of the item
- * @param {String} description - the description of the item
- * @param {String} quantity - the quantity available 
- * @param {String} location - the GPS location of the item
- * @param {String} contact - the contact info 
- * @param {String} userID - the ID of the user 
+ * @param {String} name - the name of the provider
+ * @param {String} owner_id - the owner_id of the provider
+ * @param {String} contact_no - the contact_no of the provider
+ * @param {String} category - the category of the provider 
+ * @param {String} sub_category -the sub_category of the provider
+ * @param {String} queue_capacity - the queue_capacity of the provider 
+ * @param {String} current_queue - the current_queue of the provider
+ * @param {String} location - the location of the provider
+ * @param {String} password - the password of the provider
  * 
  * @return {Promise} - promise that will be resolved (or rejected)
  * when the call to the DB completes
  */
-function update(id, type, name, description, quantity, location, contact, userID) {
+function update(id, name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password) {
     return new Promise((resolve, reject) => {
         db.get(id, (err, document) => {
             if (err) {
@@ -210,13 +212,17 @@ function update(id, type, name, description, quantity, location, contact, userID
                     _id: document._id,
                     _rev: document._rev,            // Specifiying the _rev turns this into an update
                 }
-                if (type) {item["type"] = type} else {item["type"] = document.type};
+                
                 if (name) {item["name"] = name} else {item["name"] = document.name};
-                if (description) {item["description"] = description} else {item["description"] = document.description};
-                if (quantity) {item["quantity"] = quantity} else {item["quantity"] = document.quantity};
+                if (owner_id) {item["owner_id"] = owner_id} else {item["owner_id"] = document.owner_id};
+                if (contact_no) {item["contact_no"] = contact_no} else {item["contact_no"] = document.contact_no};
+                if (category) {item["category"] = category} else {item["category"] = document.category};
+                if (sub_category) {item["sub_category"] = sub_category} else {item["sub_category"] = document.sub_category};
+                if (queue_capacity) {item["queue_capacity"] = queue_capacity} else {item["queue_capacity"] = document.queue_capacity};
+                if (current_queue) {item["current_queue"] = current_queue} else {item["current_queue"] = document.current_queue};
                 if (location) {item["location"] = location} else {item["location"] = document.location};
-                if (contact) {item["contact"] = contact} else {item["contact"] = document.contact};
-                if (userID) {item["userID"] = userID} else {item["userID"] = document.userID};
+                if (password) {item["password"] = password} else {item["password"] = document.password};
+                
  
                 db.insert(item, (err, result) => {
                     if (err) {

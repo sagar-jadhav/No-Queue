@@ -243,16 +243,27 @@ app.post('/api/resource', (req, res) => {
  */
 
 app.patch('/api/resource/:id', (req, res) => {
-  const type = req.body.type || '';
+  
+  // Provider details
+  // -----
   const name = req.body.name || '';
-  const description = req.body.description || '';
-  const userID = req.body.userID || '';
-  const quantity = req.body.quantity || '';
+  const owner_id = '';
+  const contact_no = req.body.contact_no || '';
+  const category = '';
+  const sub_category = '';
+  const queue_capacity = req.body.queue_capacity || '';
+  const current_queue = '';
   const location = req.body.location || '';
-  const contact = req.body.contact || '';
+  var password = '';
+  if (req.body.password) {
+     //base64 encoding
+    const buff = new Buffer(req.body.password);
+    password = buff.toString('base64');
+  }
+  // -----
 
   cloudant
-    .update(req.params.id, type, name, description, quantity, location, contact, userID)
+    .update(req.params.id, name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password)
     .then(data => {
       if (data.statusCode != 200) {
         res.sendStatus(data.statusCode)
