@@ -142,11 +142,13 @@ app.post('/api/message', (req, res) => {
  * A list of resource objects will be returned (which can be an empty list)
  */
 app.get('/api/resource', (req, res) => {
-  const type = req.query.type;
+  const category = req.query.category;
+  const sub_category = req.query.sub_category;
   const name = req.query.name;
-  const userID = req.query.userID;
+  const owner_id = req.query.owner_id;
+
   cloudant
-    .find(type, name, userID)
+    .find(category, sub_category, name, owner_id)
     .then(data => {
       if (data.statusCode != 200) {
         res.sendStatus(data.statusCode)
@@ -281,6 +283,37 @@ app.delete('/api/resource/:id', (req, res) => {
   cloudant
     .deleteById(req.params.id)
     .then(statusCode => res.sendStatus(statusCode))
+    .catch(err => handleError(res, err));
+});
+
+/**
+ * Delete a resource
+ */
+app.post('/api/resource/login', (req, res) => {
+  if (!req.body.owner_id) {
+    return res.status(422).json({ errors: "owner_id of provider must be provided"});
+  }
+  if (!req.body.password) {
+    return res.status(422).json({ errors: "password of provider must be provided"});
+  }
+  
+  cloudant
+    .find(undefined, undefined, undefined, req.body.owner_id)
+    .then(data => {
+      if (data.statusCode != 200) {
+        res.sendStatus(data.statusCode)
+      } else {
+        var providers = JSON.parse(data.data);
+        if (providers.length > 0) {
+          let buff = new Buffer(providers[0].password, 'base64');
+          let password = buff.toString('ascii');
+          
+          res.send(password === req.body.password);
+        } else {
+          return res.status(422).json({ errors: "owner_id not present"});
+        }
+      }
+    })
     .catch(err => handleError(res, err));
 });
 

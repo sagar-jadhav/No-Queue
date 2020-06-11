@@ -83,19 +83,22 @@ const dbCloudantConnect = () => {
  *          could be located that matches. 
  *  reject(): the err object from the underlying data store
  */
-function find(type, partialName, userID) {
+function find(category, sub_category, name, owner_id) {
     return new Promise((resolve, reject) => {
         let selector = {}
-        if (type) {
-            selector['type'] = type;
+        if (category) {
+            selector['category'] = category;
         }
-        if (partialName) {
-            let search = `(?i).*${partialName}.*`;
+        if (name) {
+            let search = `(?i).*${name}.*`;
             selector['name'] = {'$regex': search};
 
         }
-        if (userID) {
-            selector['userID'] = userID;
+        if (sub_category) {
+            selector['sub_category'] = sub_category;
+        }
+        if (owner_id) {
+            selector['owner_id'] = owner_id;
         }
         
         db.find({ 
