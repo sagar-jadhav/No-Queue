@@ -66,7 +66,7 @@ const MyResources = function ({ navigation }) {
           onPress={() => { navigation.navigate('Edit Donation', { item: props }); }}>
         <View style={styles.itemView}>
           <Text style={styles.itemName}>{props.name}</Text>
-          <Text style={styles.itemQuantity}> ( {props.quantity} ) </Text>
+          <Text style={styles.itemQuantity}> ( {props.current_queue} ) </Text>
         </View>
         <Text style={styles.itemDescription}>{props.description}</Text>
       </TouchableOpacity>

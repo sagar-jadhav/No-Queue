@@ -16,7 +16,7 @@ import EditResource from './src/screens/resource-edit';
 import MyResources from './src/screens/resources-my';
 import Map from './src/screens/map';
 
-import { HomeIcon, DonateIcon, SearchIcon } from './src/images/svg-icons';
+import { HomeIcon, DonateIcon, SearchIcon, MapIcon } from './src/images/svg-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -66,10 +66,17 @@ const TabLayout = () => (
       }}
     />
     <Tab.Screen
-      name='Donate'
+      name='List'
       component={DonateStackLayout}
       options={{
         tabBarIcon: ({color}) => (<DonateIcon fill={color} />)
+      }}
+    />
+    <Tab.Screen
+      name='Map'
+      component={MapStackLayout}
+      options={{
+        tabBarIcon: ({color}) => (<MapIcon fill={color} />)
       }}
     />
     <Tab.Screen
@@ -84,9 +91,16 @@ const TabLayout = () => (
 
 const DonateStackLayout = () => (
   <Stack.Navigator>
-  <Stack.Screen name='My Donations' component={MyResources} options={DonationsStackOptions} />
+  <Stack.Screen name='My List' component={MyResources} options={DonationsStackOptions} />
     <Stack.Screen name='Add Donation' component={AddResource} />
-    <Stack.Screen name='Edit Donation' component={EditResource} />
+    <Stack.Screen name='Edit List' component={EditResource} />
+  </Stack.Navigator>
+);
+
+const MapStackLayout = () => (
+  <Stack.Navigator>
+  <Stack.Screen name='Map' component={Map} />
+    <Stack.Screen name='Search Near me' component={Map} />
   </Stack.Navigator>
 );
 

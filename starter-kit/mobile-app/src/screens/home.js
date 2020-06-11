@@ -17,9 +17,9 @@ const styles = StyleSheet.create({
     paddingTop: 75
   },
   image: {
-    alignSelf: 'flex-start',
-    height: '20%',
-    width:'50%',
+    alignSelf: 'center',
+    height: '60%',
+    width:'100%',
     resizeMode: 'contain'
   },
   title: {
@@ -61,16 +61,17 @@ const styles = StyleSheet.create({
   }
 });
 
+
 const Home = () => (
   <View style={styles.center}>
     <ScrollView style={styles.scroll}>
       <Image
         style={styles.image}
-        source={require('../images/2020-cfc-512.png')}
+        source={require('../images/queue.jpg')}
       />
-      <Text style={styles.subtitle}>Starter Kit</Text>
-      <Text style={styles.title}>Community Collaboration</Text>
-      <Text style={styles.content}>
+      <Text style={styles.subtitle}>Why wait in Queue ?</Text>
+      <Text style={styles.title}>Kueue App</Text>
+      {/* <Text style={styles.content}>
         There is a growing interest in enabling communities to cooperate among
         themselves to solve problems in times of crisis, whether it be to
         advertise where supplies are held, offer assistance for collections, or
@@ -85,13 +86,10 @@ const Home = () => (
         server-side components, that serves as the basis for developers to build
         out a community cooperation application that addresses local needs for
         food, equipment, and resources.
-      </Text>
+      </Text> */}
       <View style={styles.buttonGroup}>
         <TouchableOpacity onPress={() => Linking.openURL('https://developer.ibm.com/callforcode')}>
-          <Text style={styles.button}>Learn more</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL('https://github.com/Call-for-Code/Solution-Starter-Kit-Cooperation-2020')}>
-          <Text style={styles.button}>Get the code</Text>
+          <Text style={styles.button}>Login for Provider</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

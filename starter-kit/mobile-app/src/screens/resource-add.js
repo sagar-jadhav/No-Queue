@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component }  from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import PickerSelect from 'react-native-picker-select';
@@ -34,7 +34,8 @@ const styles = StyleSheet.create({
     marginBottom: 25
   },
   quantityArea: {
-    width: '40%'
+    width: '40%',
+    height: '20%'
   },
   textInput: {
     fontFamily: 'IBMPlexSans-Medium',
@@ -76,11 +77,17 @@ const styles = StyleSheet.create({
 });
 
 const AddResource = function ({ navigation }) {
-  const clearItem = { userID: userID(), type: 'Food', name: '', description: '', location: '', contact: '', quantity: '1' }
+  const clearItem = { userID: userID(), category: 'EatOuts', sub_category: '' , name: '', description: '', location: '', owner_id: '', contact_no: '', password: '', queue_capacity: '1' }
   const [item, setItem] = React.useState(clearItem);
   const [useLocation, setUseLocation] = React.useState(true);
   const [position, setPosition] = React.useState({})
-
+  const category = [{ label: 'EatOuts', value: 'EatOuts', items: [{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'}] },
+  { label: 'Stores', value: 'Stores', items: [{label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'}] },
+  { label: 'Services', value: 'Services', items:[{label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}] }];
+  const sub_category = [{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
+ {label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'},
+  {label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}];
+  const itemSelected = {};
   React.useEffect(() => {
     navigation.addListener('focus', () => {
       Geolocation.getCurrentPosition((pos) => {
@@ -94,21 +101,32 @@ const AddResource = function ({ navigation }) {
       });
     })
   }, []);
-
+  
   const toggleUseLocation = () => {
     if (!useLocation && position) {
       setItem({
         ...item,
-        location: `${position.coords.latitude},${position.coords.longitude}`
+        location: `${position.coords.latitude},${position.coords.longitude}`,
+        itemSelected: item
       })
     }
     setUseLocation(!useLocation);
   };
 
+  const setItemSelected = () => {
+    if (!useLocation && position) {
+    setItem({
+      ...item,
+      location: `${position.coords.latitude},${position.coords.longitude}`,
+      itemSelected: item
+    })
+  }
+  };
+
   const sendItem = () => {
     const payload = {
       ...item,
-      quantity: isNaN(item.quantity) ? 1 : parseInt(item.quantity)
+      queue_capacity: isNaN(item.queue_capacity) ? 1 : parseInt(item.queue_capacity)
     };
 
     add(payload)
@@ -117,7 +135,7 @@ const AddResource = function ({ navigation }) {
         setItem({ ...clearItem, location: payload.location });
       })
       .catch(err => {
-        console.log(err);
+        console.log(err, payload);
         Alert.alert('ERROR', 'Please try again. If the problem persists contact an administrator.', [{text: 'OK'}]);
       });
   };
@@ -129,17 +147,34 @@ const AddResource = function ({ navigation }) {
           <Text style={styles.label}>Type</Text>
           <PickerSelect
             style={{ inputIOS: styles.selector }}
-            value={item.type}
-            onValueChange={(t) => setItem({ ...item, type: t })}
-            items={[
-                { label: 'Food', value: 'Food' },
-                { label: 'Help', value: 'Help' },
-                { label: 'Other', value: 'Other' }
-            ]}
+            value={item.category}
+            onValueChange={(t) => setItem({ ...item, category: t })}
+            onPress={this.onPress}
+            items={category}
+          />
+
+          <Text style={styles.label}>Sub-Type</Text>
+          <PickerSelect
+            style={{ inputIOS: styles.selector }}
+            value={item.sub_category}
+            onValueChange={(t) => setItem({ ...item, sub_category: t })}
+            items={sub_category}
           />
         </View>
         <View style={styles.quantityArea}>
-          <Text style={styles.label}>Quantity</Text>
+          <Text style={styles.label}>Serving Capacity</Text>
+          <TextInput
+            style={styles.textInput}
+            value={item.queue_capacity}
+            onChangeText={(t) => setItem({ ...item, quantity: t})}
+            onSubmitEditing={sendItem}
+            returnKeyType='send'
+            enablesReturnKeyAutomatically={true}
+            placeholder='e.g., 10'
+            keyboardType='numeric'
+          />
+
+          {/* <Text style={styles.label}>Average Queue</Text>
           <TextInput
             style={styles.textInput}
             value={item.quantity}
@@ -149,7 +184,7 @@ const AddResource = function ({ navigation }) {
             enablesReturnKeyAutomatically={true}
             placeholder='e.g., 10'
             keyboardType='numeric'
-          />
+          /> */}
         </View>
       </View>
 
@@ -164,17 +199,37 @@ const AddResource = function ({ navigation }) {
         placeholder='e.g., Tomotatoes'
         blurOnSubmit={false}
       />
-      <Text style={styles.label}>Contact</Text>
+      <Text style={styles.label}>User ID</Text>
       <TextInput
         style={styles.textInput}
-        value={item.contact}
-        onChangeText={(t) => setItem({ ...item, contact: t})}
+        value={item.owner_id}
+        onChangeText={(t) => setItem({ ...item, owner_id: t})}
         onSubmitEditing={sendItem}
         returnKeyType='send'
         enablesReturnKeyAutomatically={true}
         placeholder='user@domain.com'
       />
-      <Text style={styles.label}>Description</Text>
+      <Text style={styles.label}>Contact</Text>
+      <TextInput
+        style={styles.textInput}
+        value={item.contact_no}
+        onChangeText={(t) => setItem({ ...item, contact_no: t})}
+        onSubmitEditing={sendItem}
+        returnKeyType='send'
+        enablesReturnKeyAutomatically={true}
+        placeholder='+91 123456789'
+      />
+      <Text style={styles.label}>Password</Text>
+      <TextInput
+        style={styles.textInput}
+        value={item.password}
+        onChangeText={(t) => setItem({ ...item, password: t})}
+        onSubmitEditing={sendItem}
+        returnKeyType='send'
+        enablesReturnKeyAutomatically={true}
+        placeholder='e.g., Passw0rd'
+      />
+      {/* <Text style={styles.label}>Description</Text>
       <TextInput
         style={styles.textInput}
         value={item.description}
@@ -183,7 +238,7 @@ const AddResource = function ({ navigation }) {
         returnKeyType='send'
         enablesReturnKeyAutomatically={true}
         placeholder='e.g., cans of tomatoes'
-      />
+      /> */}
       <Text style={styles.label}>Location</Text>
       <View style={styles.checkboxContainer}>
         <TouchableOpacity onPress={toggleUseLocation}>
@@ -211,7 +266,7 @@ const AddResource = function ({ navigation }) {
       {
         item.type !== '' &&
         item.name.trim() !== '' &&
-        item.contact.trim() !== '' &&
+        item.owner_id.trim() !== '' &&
         <TouchableOpacity onPress={sendItem}>
           <Text style={styles.button}>Add</Text>
         </TouchableOpacity>

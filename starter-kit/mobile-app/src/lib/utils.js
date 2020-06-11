@@ -15,10 +15,11 @@ export const userID = () => {
 }
 
 export const search = (query) => {
-  const type = query.type ? `type=${query.type}` : ''
+  const type = query.category ? `type=${query.category}` : ''
+  const subtype = query.sub_category ? `type=${query.sub_category}` : ''
   const name = query.name ? `name=${query.name}` : ''
   const userID = query.userID ? `userID=${query.userID}` : ''
-
+  console.log(query, 'query', `${serverUrl}/api/resource?${name}&${type}&${subtype}&${userID}`);
   return fetch(`${serverUrl}/api/resource?${name}&${type}&${userID}`, {
     method: 'GET',
     mode: 'no-cors',

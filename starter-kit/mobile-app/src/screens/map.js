@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Config from 'react-native-config';
 import Geolocation from '@react-native-community/geolocation';
@@ -9,14 +9,26 @@ import { search } from '../lib/utils'
 const styles = StyleSheet.create({
   mapContainer: {
     flex: 1
-  }
+  },
+  label: {
+    fontFamily: 'IBMPlexSans-Medium',
+    color: '#000',
+    fontSize: 14,
+    paddingBottom: 5
+  },
+  textInput: {
+    fontFamily: 'IBMPlexSans-Medium',
+    backgroundColor: '#fff',
+    padding: 8,
+    marginBottom: 10
+  },
 });
 
 const hereApikey = Config.HERE_APIKEY;
 
 const Map = (props) => {
   const webView = useRef(null);
-
+  const [query, setQuery] = React.useState({ type: 'Food', name: '' });
   const onMessage = (event) => {
     const message = JSON.parse(event.nativeEvent.data);
 
@@ -39,6 +51,11 @@ const Map = (props) => {
         });
     }
   };
+  const searchItem = () => {
+    const payload = {
+      ...query
+    };
+  }
 
   const sendMessage = (data) => {
     const message = 
@@ -59,7 +76,23 @@ const Map = (props) => {
   `;
 
   return (
-    <View style={styles.mapContainer}>
+    <View style={styles.mapContainer}>      
+        <TouchableOpacity style={styles.itemTouchable}
+          onPress={() => { navigation.navigate('Map', { item: props }); }}>
+        <View style={styles.itemView}>
+          <Text style={styles.label}>Search Near by</Text>
+          <TextInput
+          style={styles.textInput}
+          value={query.name}
+          onChangeText={(t) => setQuery({ ...query, name: t})}
+          onSubmitEditing={searchItem}
+          returnKeyType='send'
+          enablesReturnKeyAutomatically={true}
+          placeholder='e.g., Medical'
+          blurOnSubmit={false}
+        />
+        </View>
+      </TouchableOpacity>
       <WebView          
         injectedJavaScript={injectedJS}
         source={{ uri: sourceUri }}

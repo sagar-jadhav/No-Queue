@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
 });
 
 const SearchResources = function ({ route, navigation }) {
-  const [query, setQuery] = React.useState({ type: 'Food', name: '' });
+  const [query, setQuery] = React.useState({ category: 'EatOuts', sub_category: '', name: '' });
   const [items, setItems] = React.useState([]);
   const [info, setInfo] = React.useState('');
 
@@ -90,7 +90,7 @@ const SearchResources = function ({ route, navigation }) {
           onPress={() => { navigation.navigate('Map', { item: props }); }}>
         <View style={styles.itemView}>
           <Text style={styles.itemName}>{props.name}</Text>
-          <Text style={styles.itemQuantity}> ( {props.quantity} ) </Text>
+          <Text style={styles.itemQuantity}> ( {props.current_queue} ) </Text>
         </View>
         <Text style={styles.itemDescription}>{props.description}</Text>
       </TouchableOpacity>
@@ -106,6 +106,7 @@ const SearchResources = function ({ route, navigation }) {
       .then((results) => {
         setInfo(`${results.length} result(s)`)
         setItems(results);
+        console.log(payload);
       })
       .catch(err => {
         console.log(err);
@@ -120,11 +121,24 @@ const SearchResources = function ({ route, navigation }) {
         <PickerSelect
           style={{ inputIOS: styles.selector }}
           value={query.type}
-          onValueChange={(t) => setQuery({ ...query, type: t })}
+          onValueChange={(t) => setQuery({ ...query, category: t })}
           items={[
-              { label: 'Food', value: 'Food' },
-              { label: 'Help', value: 'Help' },
-              { label: 'Other', value: 'Other' }
+              { label: 'EatOuts', value: 'eatouts' },
+              { label: 'Stores', value: 'Stores' },
+              { label: 'Services', value: 'Services' }
+          ]}
+        />
+        <Text style={styles.label}>Sub-Type</Text>
+        <PickerSelect
+          style={{ inputIOS: styles.selector }}
+          value={query.subtype}
+          onValueChange={(t) => setQuery({ ...query, sub_category: t })}
+          items={[
+              { label: 'General Stores', value: 'General Stores' },
+              { label: 'Medical Stores', value: 'Medical Stores' },
+              {label: 'Liquor Stores', value: 'liquor_stores'},
+              {label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
+              {label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}
           ]}
         />
         <Text style={styles.label}>Name</Text>
@@ -135,7 +149,7 @@ const SearchResources = function ({ route, navigation }) {
           onSubmitEditing={searchItem}
           returnKeyType='send'
           enablesReturnKeyAutomatically={true}
-          placeholder='e.g., Tomotatoes'
+          placeholder='e.g., Medical'
           blurOnSubmit={false}
         />
         <TouchableOpacity onPress={searchItem}>
