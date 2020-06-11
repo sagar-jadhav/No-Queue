@@ -148,15 +148,17 @@ function deleteById(id, rev) {
  * @param {String} contact_no - the contact_no of the provider
  * @param {String} category - the category of the provider
  * @param {String} sub_category - the sub_category of the provider
- * @param {String} queue_capacity - the queue_capacity of the provider
- * @param {String} current_queue - the current_queue of the provider
+ * @param {String} serving_capacity - the serving_capacity of the provider
+ * @param {String} in_queue - the in_queue queue of the provider
+ * @param {String} in_store - the in_store queue of the provider
+ * @param {String} marker - the marker of the queue of the provider
  * @param {String} location - the location of the provider
  * @param {String} password - the password of the provider
  * 
  * @return {Promise} - promise that will be resolved (or rejected)
  * when the call to the DB completes
  */
-function create(name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password) {
+function create(name, owner_id, contact_no, category, sub_category, serving_capacity, in_queue, in_store, marker, location, password) {
     return new Promise((resolve, reject) => {
         let itemId = uuidv4();
         let whenCreated = Date.now();
@@ -169,8 +171,10 @@ function create(name, owner_id, contact_no, category, sub_category, queue_capaci
             contact_no: contact_no,
             category: category,
             sub_category: sub_category,
-            queue_capacity: queue_capacity,
-            current_queue: current_queue,
+            serving_capacity: serving_capacity,
+            in_queue: in_queue,
+            in_store: in_store,
+            marker: marker,
             location: location,
             password: password,
         };
@@ -197,15 +201,17 @@ function create(name, owner_id, contact_no, category, sub_category, queue_capaci
  * @param {String} contact_no - the contact_no of the provider
  * @param {String} category - the category of the provider 
  * @param {String} sub_category -the sub_category of the provider
- * @param {String} queue_capacity - the queue_capacity of the provider 
- * @param {String} current_queue - the current_queue of the provider
+ * @param {String} serving_capacity - the serving_capacity of the provider 
+ * @param {String} in_queue - the in_queue queue of the provider
+ * @param {String} in_store - the in_store queue of the provider
+ * @param {String} marker - the marker of the queue of the provider
  * @param {String} location - the location of the provider
  * @param {String} password - the password of the provider
  * 
  * @return {Promise} - promise that will be resolved (or rejected)
  * when the call to the DB completes
  */
-function update(id, name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password) {
+function update(id, name, owner_id, contact_no, category, sub_category, serving_capacity, in_queue, in_store, marker, location, password, isIncrement) {
     return new Promise((resolve, reject) => {
         db.get(id, (err, document) => {
             if (err) {
@@ -221,8 +227,16 @@ function update(id, name, owner_id, contact_no, category, sub_category, queue_ca
                 if (contact_no) {item["contact_no"] = contact_no} else {item["contact_no"] = document.contact_no};
                 if (category) {item["category"] = category} else {item["category"] = document.category};
                 if (sub_category) {item["sub_category"] = sub_category} else {item["sub_category"] = document.sub_category};
-                if (queue_capacity) {item["queue_capacity"] = queue_capacity} else {item["queue_capacity"] = document.queue_capacity};
-                if (current_queue) {item["current_queue"] = current_queue} else {item["current_queue"] = document.current_queue};
+                if (serving_capacity) {item["serving_capacity"] = serving_capacity} else {item["serving_capacity"] = document.serving_capacity};
+                if (in_queue) {item["in_queue"] = in_queue} else {item["in_queue"] = document.in_queue};
+                
+                if (in_store) {
+                    item["in_store"] = in_store
+                } else {
+                    item["in_store"] = (isIncrement) ? document.in_store + 1 : document.in_store - 1 
+                };
+                
+                if (marker) {item["marker"] = marker} else {item["marker"] = document.marker};
                 if (location) {item["location"] = location} else {item["location"] = document.location};
                 if (password) {item["password"] = password} else {item["password"] = document.password};
                 

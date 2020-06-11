@@ -1,4 +1,4 @@
-require('dotenv').config({silent: true})
+require('dotenv').config({ silent: true })
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -81,9 +81,9 @@ function post_process_assistant(result) {
   //
   // That's our trigger to do a lookup - using the entitty.value as the name of resource
   // to to a datbase lookup.
-  if (result.intents.length > 0 ) {
+  if (result.intents.length > 0) {
     result.entities.forEach(item => {
-      if ((item.entity == "supplies") &&  (item.confidence > 0.3)) {
+      if ((item.entity == "supplies") && (item.confidence > 0.25)) {
         resource = item.value
       }
     })
@@ -93,14 +93,14 @@ function post_process_assistant(result) {
   } else {
     // OK, we have a resource...let's look this up in the DB and see if anyone has any.
     return cloudant
-      .find('', resource, '')
+      .find(resource, '', '', '')
       .then(data => {
         let processed_result = result
         if ((data.statusCode == 200) && (data.data != "[]")) {
           processed_result["resources"] = JSON.parse(data.data)
           processed_result["generic"][0]["text"] = 'There is' + '\xa0' + resource + " available"
         } else {
-          processed_result["generic"][0]["text"] = "Sorry, no" + '\xa0' + resource + " available"           
+          processed_result["generic"][0]["text"] = "Sorry, no" + '\xa0' + resource + " available"
         }
         return processed_result
       })
@@ -178,32 +178,32 @@ app.get('/api/resource', (req, res) => {
  */
 let types = ["Food", "Other", "Help"]
 app.post('/api/resource', (req, res) => {
-  
+
   // Validation
   // ------
   if (!req.body.name) {
-    return res.status(422).json({ errors: "Name of provider must be provided"});
+    return res.status(422).json({ errors: "Name of provider must be provided" });
   }
   if (!req.body.owner_id) {
-    return res.status(422).json({ errors: "Owner of provider must be provided"});
+    return res.status(422).json({ errors: "Owner of provider must be provided" });
   }
   if (!req.body.contact_no) {
-    return res.status(422).json({ errors: "Contact Number of provider must be provided"});
+    return res.status(422).json({ errors: "Contact Number of provider must be provided" });
   }
   if (!req.body.category) {
-    return res.status(422).json({ errors: "Category of provider must be provided"});
+    return res.status(422).json({ errors: "Category of provider must be provided" });
   }
   if (!req.body.sub_category) {
-    return res.status(422).json({ errors: "Sub Category of provider must be provided"});
+    return res.status(422).json({ errors: "Sub Category of provider must be provided" });
   }
-  if (!req.body.queue_capacity) {
-    return res.status(422).json({ errors: "Queue Capacity of provider must be provided"});
+  if (!req.body.serving_capacity) {
+    return res.status(422).json({ errors: "Queue Capacity of provider must be provided" });
   }
   if (!req.body.location) {
-    return res.status(422).json({ errors: "Location of provider must be provided"});
+    return res.status(422).json({ errors: "Location of provider must be provided" });
   }
   if (!req.body.password) {
-    return res.status(422).json({ errors: "Password of provider must be provided"});
+    return res.status(422).json({ errors: "Password of provider must be provided" });
   }
   // ------
 
@@ -214,8 +214,10 @@ app.post('/api/resource', (req, res) => {
   const contact_no = req.body.contact_no;
   const category = req.body.category;
   const sub_category = req.body.sub_category;
-  const queue_capacity = req.body.queue_capacity
-  const current_queue = 1;
+  const serving_capacity = req.body.serving_capacity
+  const in_queue = 0;
+  const in_store = 1;
+  const marker = 'markerGreen'
   const location = req.body.location;
 
   //base64 encoding
@@ -224,7 +226,7 @@ app.post('/api/resource', (req, res) => {
   // -----
 
   cloudant
-    .create(name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password)
+    .create(name, owner_id, contact_no, category, sub_category, serving_capacity, in_queue, in_store, marker, location, password)
     .then(data => {
       if (data.statusCode != 201) {
         res.sendStatus(data.statusCode)
@@ -245,7 +247,7 @@ app.post('/api/resource', (req, res) => {
  */
 
 app.patch('/api/resource/:id', (req, res) => {
-  
+
   // Provider details
   // -----
   const name = req.body.name || '';
@@ -253,19 +255,21 @@ app.patch('/api/resource/:id', (req, res) => {
   const contact_no = req.body.contact_no || '';
   const category = '';
   const sub_category = '';
-  const queue_capacity = req.body.queue_capacity || '';
-  const current_queue = '';
+  const serving_capacity = req.body.serving_capacity || '';
+  const in_queue = '';
+  const in_store = '';
+  const marker = 'markerGreen';
   const location = req.body.location || '';
   var password = '';
   if (req.body.password) {
-     //base64 encoding
+    //base64 encoding
     const buff = new Buffer(req.body.password);
     password = buff.toString('base64');
   }
   // -----
 
   cloudant
-    .update(req.params.id, name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password)
+    .update(req.params.id, name, owner_id, contact_no, category, sub_category, serving_capacity, in_queue, in_store, marker, location, password)
     .then(data => {
       if (data.statusCode != 200) {
         res.sendStatus(data.statusCode)
@@ -291,12 +295,12 @@ app.delete('/api/resource/:id', (req, res) => {
  */
 app.post('/api/resource/login', (req, res) => {
   if (!req.body.owner_id) {
-    return res.status(422).json({ errors: "owner_id of provider must be provided"});
+    return res.status(422).json({ errors: "owner_id of provider must be provided" });
   }
   if (!req.body.password) {
-    return res.status(422).json({ errors: "password of provider must be provided"});
+    return res.status(422).json({ errors: "password of provider must be provided" });
   }
-  
+
   cloudant
     .find(undefined, undefined, undefined, req.body.owner_id)
     .then(data => {
@@ -307,18 +311,58 @@ app.post('/api/resource/login', (req, res) => {
         if (providers.length > 0) {
           let buff = new Buffer(providers[0].password, 'base64');
           let password = buff.toString('ascii');
-          
+
           res.send(password === req.body.password);
         } else {
-          return res.status(422).json({ errors: "owner_id not present"});
+          return res.status(422).json({ errors: "owner_id not present" });
         }
       }
     })
     .catch(err => handleError(res, err));
 });
 
+app.post('/api/resource/checkin', (req, res) => {
+  if (!req.body.id) {
+    return res.status(422).json({ errors: "id of provider must be provided" });
+  }
+  if (!req.body.token) {
+    return res.status(422).json({ errors: "token of provider must be provided" });
+  }
+
+  cloudant
+    .update(req.body.id, '', '', '', '', '', '', '', '', '', '', '', true)
+    .then(data => {
+      if (data.statusCode != 200) {
+        res.sendStatus(data.statusCode)
+      } else {
+        res.send(data.data)
+      }
+    })
+    .catch(err => handleError(res, err));
+});
+
+app.post('/api/resource/checkout', (req, res) => {
+  if (!req.body.id) {
+    return res.status(422).json({ errors: "id of provider must be provided" });
+  }
+  if (!req.body.token) {
+    return res.status(422).json({ errors: "token of provider must be provided" });
+  }
+
+  cloudant
+    .update(req.body.id, '', '', '', '', '', '', '', '', '', '', '', false)
+    .then(data => {
+      if (data.statusCode != 200) {
+        res.sendStatus(data.statusCode)
+      } else {
+        res.send(data.data)
+      }
+    })
+    .catch(err => handleError(res, err));
+});
+
 const server = app.listen(port, () => {
-   const host = server.address().address;
-   const port = server.address().port;
-   console.log(`SolutionStarterKitCooperationServer listening at http://${host}:${port}`);
+  const host = server.address().address;
+  const port = server.address().port;
+  console.log(`SolutionStarterKitCooperationServer listening at http://${host}:${port}`);
 });
