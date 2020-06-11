@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Config from 'react-native-config';
+import { CheckedIcon, UncheckedIcon } from '../images/svg-icons';
 import Geolocation from '@react-native-community/geolocation';
 
 import { search } from '../lib/utils'
@@ -22,13 +23,27 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 10
   },
+  itemView: {
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10
+  },
+  checkboxLabel: {
+    fontFamily: 'IBMPlexSans-Light',
+    fontSize: 13
+  }
 });
 
 const hereApikey = Config.HERE_APIKEY;
 
 const Map = (props) => {
   const webView = useRef(null);
-  const [query, setQuery] = React.useState({ type: 'Food', name: '' });
+  const [query, setQuery] = React.useState({ name: '' , nearby: true});
+  const [useNearBy] = React.useState(true);
   const onMessage = (event) => {
     const message = JSON.parse(event.nativeEvent.data);
 
@@ -55,7 +70,25 @@ const Map = (props) => {
     const payload = {
       ...query
     };
+
+    search(payload)
+      .then((results) => {
+        sendMessage({search: results});
+        console.log( results, "....................");
+      })
+      .catch(err => {
+        console.log(err);
+        Alert.alert('ERROR', 'Please try again. If the problem persists contact an administrator.', [{text: 'OK'}]);
+      });
   }
+
+  const toggleNearBy = () => {
+      setQuery({
+        ...query,
+        nearby: useNearBy
+      })
+      search(query);
+  };
 
   const sendMessage = (data) => {
     const message = 
@@ -77,10 +110,21 @@ const Map = (props) => {
 
   return (
     <View style={styles.mapContainer}>      
-        <TouchableOpacity style={styles.itemTouchable}
-          onPress={() => { navigation.navigate('Map', { item: props }); }}>
+        <TouchableOpacity style={styles.itemTouchable}>
         <View style={styles.itemView}>
-          <Text style={styles.label}>Search Near by</Text>
+          {/* <Text style={styles.label}>Search :</Text> */}
+          <View style={styles.checkboxContainer}>
+        <TouchableOpacity onPress={toggleNearBy}>
+          {
+            (useNearBy)
+              ?
+              <CheckedIcon height='18' width='18'/>
+              :
+              <UncheckedIcon height='18' width='18'/>
+          }
+        </TouchableOpacity>
+        <Text style={styles.checkboxLabel}> Search for NearBy </Text>
+      </View>
           <TextInput
           style={styles.textInput}
           value={query.name}

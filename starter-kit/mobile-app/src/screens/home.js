@@ -6,8 +6,8 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF'
   },
   scroll: {
@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
   },
   image: {
     alignSelf: 'center',
-    height: '60%',
+    height: '100%',
     width:'100%',
-    resizeMode: 'contain'
+    resizeMode: 'stretch'
   },
   title: {
     fontFamily: 'IBMPlexSans-Medium',
@@ -62,15 +62,15 @@ const styles = StyleSheet.create({
 });
 
 
-const Home = () => (
+const Home = ({navigation}) => (
   <View style={styles.center}>
     <ScrollView style={styles.scroll}>
       <Image
         style={styles.image}
-        source={require('../images/queue.jpg')}
+        source={require('../images/image.png')}
       />
-      <Text style={styles.subtitle}>Why wait in Queue ?</Text>
-      <Text style={styles.title}>Kueue App</Text>
+      {/* <Text style={styles.subtitle}>Why wait in Queue ?</Text> */}
+      {/* <Text style={styles.title}>Kueue</Text> */}
       {/* <Text style={styles.content}>
         There is a growing interest in enabling communities to cooperate among
         themselves to solve problems in times of crisis, whether it be to
@@ -88,8 +88,13 @@ const Home = () => (
         food, equipment, and resources.
       </Text> */}
       <View style={styles.buttonGroup}>
-        <TouchableOpacity onPress={() => Linking.openURL('https://developer.ibm.com/callforcode')}>
-          <Text style={styles.button}>Login for Provider</Text>
+        <TouchableOpacity onPress={() => {navigation.navigate('Login');}}>
+          <Text style={styles.button}>Login for Vendor</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity onPress={() => {navigation.navigate('Register');}}>
+          <Text style={styles.button}>Register for Vendor</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

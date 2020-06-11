@@ -15,6 +15,8 @@ import AddResource from './src/screens/resource-add';
 import EditResource from './src/screens/resource-edit';
 import MyResources from './src/screens/resources-my';
 import Map from './src/screens/map';
+import Login from './src/screens/login';
+import Register from './src/screens/register';
 
 import { HomeIcon, DonateIcon, SearchIcon, MapIcon } from './src/images/svg-icons';
 
@@ -60,18 +62,18 @@ const TabLayout = () => (
     tabBarOptions={tabBarOptions} >
     <Tab.Screen
       name='Home'
-      component={Home}
+      component={HomeStackLayout}
       options={{
         tabBarIcon: ({color}) => (<HomeIcon fill={color}/>)
       }}
     />
-    <Tab.Screen
+    {/* <Tab.Screen
       name='List'
       component={DonateStackLayout}
       options={{
         tabBarIcon: ({color}) => (<DonateIcon fill={color} />)
       }}
-    />
+    /> */}
     <Tab.Screen
       name='Map'
       component={MapStackLayout}
@@ -87,6 +89,14 @@ const TabLayout = () => (
       }}
     />
   </Tab.Navigator>
+);
+
+const HomeStackLayout = () => (
+  <Stack.Navigator>
+  <Stack.Screen name='Home' component={Home} />
+    <Stack.Screen name='Login' component={Login} />
+    <Stack.Screen name='Register' component={Register} />
+  </Stack.Navigator>
 );
 
 const DonateStackLayout = () => (

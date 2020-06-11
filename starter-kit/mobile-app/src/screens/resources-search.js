@@ -90,7 +90,7 @@ const SearchResources = function ({ route, navigation }) {
           onPress={() => { navigation.navigate('Map', { item: props }); }}>
         <View style={styles.itemView}>
           <Text style={styles.itemName}>{props.name}</Text>
-          <Text style={styles.itemQuantity}> ( {props.current_queue} ) </Text>
+          <Text style={styles.itemQuantity}> ( {props.in_store} / {props.serving_capacity} ) [{props.in_queue}] </Text>
         </View>
         <Text style={styles.itemDescription}>{props.description}</Text>
       </TouchableOpacity>
@@ -124,8 +124,8 @@ const SearchResources = function ({ route, navigation }) {
           onValueChange={(t) => setQuery({ ...query, category: t })}
           items={[
               { label: 'EatOuts', value: 'eatouts' },
-              { label: 'Stores', value: 'Stores' },
-              { label: 'Services', value: 'Services' }
+              { label: 'Stores', value: 'stores' },
+              { label: 'Services', value: 'services' }
           ]}
         />
         <Text style={styles.label}>Sub-Type</Text>
@@ -134,8 +134,8 @@ const SearchResources = function ({ route, navigation }) {
           value={query.subtype}
           onValueChange={(t) => setQuery({ ...query, sub_category: t })}
           items={[
-              { label: 'General Stores', value: 'General Stores' },
-              { label: 'Medical Stores', value: 'Medical Stores' },
+              { label: 'General Stores', value: 'general_stores' },
+              { label: 'Medical Stores', value: 'medical_stores' },
               {label: 'Liquor Stores', value: 'liquor_stores'},
               {label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
               {label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}

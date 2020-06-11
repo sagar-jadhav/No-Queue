@@ -19,6 +19,24 @@ const markerRed = `
 </svg>
 `.trim();
 
+const markerGreen = `
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" aria-labelledby="title" aria-describedby="desc" role="img">
+  <path data-name="layer1" d="M32 2a20 20 0 0 0-20 20c0 18 20 40 20 40s20-22 20-40A20 20 0 0 0 32 2zm0 28a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" fill="#10a432"/>
+</svg>
+`.trim();
+
+const markerOrange = `
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" aria-labelledby="title" aria-describedby="desc" role="img">
+  <path data-name="layer1" d="M32 2a20 20 0 0 0-20 20c0 18 20 40 20 40s20-22 20-40A20 20 0 0 0 32 2zm0 28a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" fill="#dc6908"/>
+</svg>
+`.trim();
+
+// const markerOrange = new H.map.Icon(
+//   svgMarkup.replace('${FILL}', 'white').replace('${STROKE}', 'orange')),
+//   cubsMarker = new H.map.Marker({lat: 41.9483, lng: -87.6555 },
+//     {icon: cubsIcon});
+//   map.addObject(markerOrange);
+
 const markerBlue = `
 <svg width="22px" height="31px" viewBox="0 0 22 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <path d="M11,1 C5.00584111,0.922155833 0.0822937842,5.71590055 0,11.71 C0.0025279372,14.0375734 0.776170498,16.2987196 2.2,18.14 L11,31 L19.8,18.14 C21.2238295,16.2987196 21.9974721,14.0375734 22,11.71 C21.9177062,5.71590055 16.9941589,0.922155833 11,1 Z" id="outerPath" fill="#1062FE"></path>
@@ -52,8 +70,8 @@ const formatDuration = (d) => {
 const formatItemInfo = (item) => {
   return `
 <p><strong>Name</strong>:<br> ${item.name}</p>
-<p><strong>Description</strong>:<br> ${item.description}</p>
-<p><strong>Contact</strong>:<br> ${item.contact}</p>
+<p><strong>In Store</strong>:<br> ${item.in_store} / ${item.serving_capacity}</p>
+<p><strong>In Queue</strong>:<br> ${item.in_queue}</p>
 `.trim();
 };
 const getCoordinates = (location) => {
@@ -257,6 +275,10 @@ const calculateRoute = (from, to) => {
     }).then((routes) => {
       routePanel(routes, onRouteSelection);
     })
+};
+
+const getMarker = (item) => {
+  return item.marker.trim();
 };
 
 const getRoute = function (from, to) {
