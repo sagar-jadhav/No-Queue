@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontFamily: 'IBMPlexSans-Medium',
     backgroundColor: '#fff',
-    padding: 8,
+    padding: 10,
     marginBottom: 10
   },
   itemView: {
@@ -30,11 +30,12 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 10
+    marginBottom: 10,
+    padding: 10
   },
   checkboxLabel: {
     fontFamily: 'IBMPlexSans-Light',
-    fontSize: 13
+    fontSize: 16
   }
 });
 
@@ -46,7 +47,17 @@ const Map = (props) => {
   const [useNearBy] = React.useState(true);
   const onMessage = (event) => {
     const message = JSON.parse(event.nativeEvent.data);
-
+    if(props && !(props.route.params && props.route.params.item)){
+      message.name = ' '
+      search(message.name)
+      .then((response) => {
+        sendMessage({ search: response });
+      })
+      .catch(err => {
+        console.log(err)
+        Alert.alert('ERROR', 'Please try again. If the problem persists contact an administrator.', [{text: 'OK'}]);
+      });
+    };
     if (message.status && message.status === 'initialized') {
       Geolocation.getCurrentPosition((position) => {
         sendMessage(position);

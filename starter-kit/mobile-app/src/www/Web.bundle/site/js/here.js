@@ -12,12 +12,16 @@ let currentInfoBubble = null;
 let geocoder = null;
 let searchCallback = false;
 
-const markerRed = `
-<svg width="22px" height="31px" viewBox="0 0 22 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <path d="M11,1 C5.00584111,0.922155833 0.0822937842,5.71590055 0,11.71 C0.0025279372,14.0375734 0.776170498,16.2987196 2.2,18.14 L11,31 L19.8,18.14 C21.2238295,16.2987196 21.9974721,14.0375734 22,11.71 C21.9177062,5.71590055 16.9941589,0.922155833 11,1 Z" id="outerPath" fill="#DA1E28"></path>
-  <path d="M11,7 C8.23857625,7 6,9.23857625 6,12 C6,14.7614237 8.23857625,17 11,17 C13.7614237,17 16,14.7614237 16,12 C16,10.6739176 15.4732158,9.40214799 14.5355339,8.46446609 C13.597852,7.5267842 12.3260824,7 11,7 Z" id="innerPath" fill="#FFFFFF"></path>
-</svg>
-`.trim();
+// const markerRed = `
+// <svg width="22px" height="31px" viewBox="0 0 22 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+//   <path d="M11,1 C5.00584111,0.922155833 0.0822937842,5.71590055 0,11.71 C0.0025279372,14.0375734 0.776170498,16.2987196 2.2,18.14 L11,31 L19.8,18.14 C21.2238295,16.2987196 21.9974721,14.0375734 22,11.71 C21.9177062,5.71590055 16.9941589,0.922155833 11,1 Z" id="outerPath" fill="#DA1E28"></path>
+//   <path d="M11,7 C8.23857625,7 6,9.23857625 6,12 C6,14.7614237 8.23857625,17 11,17 C13.7614237,17 16,14.7614237 16,12 C16,10.6739176 15.4732158,9.40214799 14.5355339,8.46446609 C13.597852,7.5267842 12.3260824,7 11,7 Z" id="innerPath" fill="#FFFFFF"></path>
+// </svg>
+// `.trim();
+
+const markerRed = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" aria-labelledby="title" aria-describedby="desc" role="img">
+<path data-name="layer1" d="M32 2a20 20 0 0 0-20 20c0 18 20 40 20 40s20-22 20-40A20 20 0 0 0 32 2zm0 28a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" fill="#dc0808"/>
+</svg>`.trim();
 
 const markerGreen = `
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" aria-labelledby="title" aria-describedby="desc" role="img">
@@ -69,9 +73,10 @@ const formatDuration = (d) => {
 };
 const formatItemInfo = (item) => {
   return `
-<p><strong>Name</strong>:<br> ${item.name}</p>
-<p><strong>In Store</strong>:<br> ${item.in_store} / ${item.serving_capacity}</p>
-<p><strong>In Queue</strong>:<br> ${item.in_queue}</p>
+  <div style="width: fit-content; display: inline; min-width: 15rem">
+<span style="display: inline-flex; width: 100%; min-width: 12rem;"><strong>Name</strong>: ${item.name}</span> </br>
+<span style="display: inline-flex; width: 100%; min-width: 12rem;"><strong>In Store</strong>: ${item.in_store} / ${item.serving_capacity}</span> </br>
+<span style="display: inline-flex; width: 100%; min-width: 12rem;"><strong>In Queue</strong>: ${item.in_queue}</span> </div>
 `.trim();
 };
 const getCoordinates = (location) => {
@@ -277,10 +282,6 @@ const calculateRoute = (from, to) => {
     })
 };
 
-const getMarker = (item) => {
-  return item.marker.trim();
-};
-
 const getRoute = function (from, to) {
   if (!router) {
     router = platform.getRoutingService();
@@ -300,6 +301,12 @@ const getRoute = function (from, to) {
 const searchFor = (query, cb) => {
   searchCallback = cb;
   sendMessage({ search: query });
+}
+
+const getMarker = (item) => {
+    var marker = item.marker === 'markerGreen' ? markerGreen : (item.marker === 'markerRed' ? markerRed : (item.marker === 'markerOrange' ? markerOrange : markerRed ));
+    console.log(marker, item.marker);
+    return marker;
 }
 
 const handleSearchResponse = (results) => {
@@ -334,7 +341,7 @@ const handleSearchResponse = (results) => {
           skip: true,
           data: formatItemInfo(item),
           clickListener: eventListener,
-          icon: new H.map.Icon(circleRed, {
+          icon: new H.map.Icon(getMarker(item), {
             anchor: new H.math.Point(0, 31),
             size: new H.math.Size(28, 28)
           })

@@ -121,8 +121,9 @@ const Register = function ({ navigation }) {
     };
 
     add(payload)
-      .then(() => {
-        Alert.alert('Thank you!', 'Your Shop has been added.', [{text: 'OK', onPress: () => {navigation.navigate('Home');}}]);
+      .then(res => {
+        console.log(res, 'res');
+        Alert.alert('Thank you!', 'Your Shop has been added.', [{text: 'OK', onPress: () => {navigation.navigate('Map', { item: res });}}]);
         setItem({ ...clearItem, location: payload.location });
       })
       .catch(err => {

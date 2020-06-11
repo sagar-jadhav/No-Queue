@@ -14,13 +14,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     paddingBottom: 25,
-    paddingTop: 75
+    paddingTop: 50
   },
   image: {
     alignSelf: 'center',
-    height: '100%',
-    width:'100%',
-    resizeMode: 'stretch'
+    height: 370,
+    width: 370,
+    resizeMode: 'stretch',
+    paddingTop: 0
   },
   title: {
     fontFamily: 'IBMPlexSans-Medium',
@@ -45,15 +46,18 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   buttonGroup: {
-    flex: 1,
+    flex: 2,
     paddingTop: 15,
-    width: 175
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: 165,
+    alignSelf: 'center',
   },
   button: {
     backgroundColor: '#1062FE',
     color: '#FFFFFF',
     fontFamily: 'IBMPlexSans-Medium',
-    fontSize: 16,
+    fontSize: 14,
     overflow: 'hidden',
     padding: 12,
     textAlign:'center',
