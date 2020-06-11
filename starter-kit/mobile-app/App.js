@@ -17,6 +17,8 @@ import MyResources from './src/screens/resources-my';
 import Map from './src/screens/map';
 import Login from './src/screens/login';
 import Register from './src/screens/register';
+import Checkin from './src/screens/checkin';
+import Checkout from './src/screens/checkout'
 
 import { HomeIcon, DonateIcon, SearchIcon, MapIcon } from './src/images/svg-icons';
 
@@ -96,6 +98,8 @@ const HomeStackLayout = () => (
   <Stack.Screen name='Home' component={Home} />
     <Stack.Screen name='Login' component={Login} />
     <Stack.Screen name='Register' component={Register} />
+    <Stack.Screen name='Checkin' component={Checkin} />
+    <Stack.Screen name='Checkout' component={Checkout} />
   </Stack.Navigator>
 );
 

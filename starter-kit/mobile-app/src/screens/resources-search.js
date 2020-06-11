@@ -92,9 +92,24 @@ const SearchResources = function ({ route, navigation }) {
           <Text style={styles.itemName}>{props.name}</Text>
           <Text style={styles.itemQuantity}> ( {props.in_store} / {props.serving_capacity} ) [{props.in_queue}] </Text>
         </View>
-        <Text style={styles.itemDescription}>{props.description}</Text>
+        <View style={styles.itemView}>
+          <TouchableOpacity onPress={bookMySlot}>
+            <Text style={styles.button}>Book</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {navigation.navigate('Checkin', props);}}>
+            <Text style={styles.button}>Check-in</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {navigation.navigate('Checkout', props);}}>
+            <Text style={styles.button}>Check-out</Text>
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
     );
+  };
+
+  const bookMySlot = () => {
+    let message = 'Your booking token is ' + Math.floor(1000 + Math.random() * 9000);
+    Alert.alert('Thank you!', message, [{text: 'OK', onPress: () => {navigation.navigate('Search');}}]);
   };
 
   const searchItem = () => {

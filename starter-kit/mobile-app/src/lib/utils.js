@@ -132,3 +132,39 @@ export const message = (payload) => {
     body: JSON.stringify(payload)
   });
 };
+
+export const checkin = (payload) => {
+  return fetch(`${serverUrl}/api/resource/checkin`, {
+    method: 'POST',
+    mode: 'no-cors',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(response.statusText || response.message || response.status);
+    } else {
+      return response.json();
+    }
+  });
+};
+
+export const checkout = (payload) => {
+  return fetch(`${serverUrl}/api/resource/checkout`, {
+    method: 'POST',
+    mode: 'no-cors',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(response.statusText || response.message || response.status);
+    } else {
+      return response.json();
+    }
+  });
+};
