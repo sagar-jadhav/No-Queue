@@ -17,7 +17,7 @@ export const userID = () => {
 export const search = (query) => {
   const type = query.category ? `category=${query.category}` : ''
   const subtype = query.sub_category ? `sub_category=${query.sub_category}` : ''
-  const name = query.name ? `name=${query.name}` : ''
+  const name = query.name ? `name=${query.name}` : ' '
   console.log(query, 'query', `${serverUrl}/api/resource?${name}&${type}&${subtype}`);
   return fetch(`${serverUrl}/api/resource?${name}&${type}&${subtype}`, {
     method: 'GET',
