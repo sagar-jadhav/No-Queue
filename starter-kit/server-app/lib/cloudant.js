@@ -140,39 +140,43 @@ function deleteById(id, rev) {
 /**
  * Create a resource with the specified attributes
  * 
- * @param {String} type - the type of the item
- * @param {String} name - the name of the item
- * @param {String} description - the description of the item
- * @param {String} quantity - the quantity available 
- * @param {String} location - the GPS location of the item
- * @param {String} contact - the contact info 
- * @param {String} userID - the ID of the user 
+ * @param {String} name - the name of the provider
+ * @param {String} owner_id - the owner_id of the provider
+ * @param {String} contact_no - the contact_no of the provider
+ * @param {String} category - the category of the provider
+ * @param {String} sub_category - the sub_category of the provider
+ * @param {String} queue_capacity - the queue_capacity of the provider
+ * @param {String} current_queue - the current_queue of the provider
+ * @param {String} location - the location of the provider
+ * @param {String} password - the password of the provider
  * 
  * @return {Promise} - promise that will be resolved (or rejected)
  * when the call to the DB completes
  */
-function create(type, name, description, quantity, location, contact, userID) {
+function create(name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password) {
     return new Promise((resolve, reject) => {
         let itemId = uuidv4();
         let whenCreated = Date.now();
         let item = {
             _id: itemId,
             id: itemId,
-            type: type,
+            whenCreated: whenCreated,
             name: name,
-            description: description,
-            quantity: quantity,
+            owner_id: owner_id,
+            contact_no: contact_no,
+            category: category,
+            sub_category: sub_category,
+            queue_capacity: queue_capacity,
+            current_queue: current_queue,
             location: location,
-            contact: contact,
-            userID: userID,
-            whenCreated: whenCreated
+            password: password,
         };
         db.insert(item, (err, result) => {
             if (err) {
                 console.log('Error occurred: ' + err.message, 'create()');
                 reject(err);
             } else {
-                resolve({ data: { createdId: result.id, createdRevId: result.rev }, statusCode: 201 });
+                resolve({ data: { createdId: result.owner_id, createdRevId: result.rev }, statusCode: 201 });
             }
         });
     });

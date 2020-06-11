@@ -176,28 +176,53 @@ app.get('/api/resource', (req, res) => {
  */
 let types = ["Food", "Other", "Help"]
 app.post('/api/resource', (req, res) => {
-  if (!req.body.type) {
-    return res.status(422).json({ errors: "Type of item must be provided"});
-  }
-  if (!types.includes(req.body.type)) {
-    return res.status(422).json({ errors: "Type of item must be one of " + types.toString()});
-  }
+  
+  // Validation
+  // ------
   if (!req.body.name) {
-    return res.status(422).json({ errors: "Name of item must be provided"});
+    return res.status(422).json({ errors: "Name of provider must be provided"});
   }
-  if (!req.body.contact) {
-    return res.status(422).json({ errors: "A method of conact must be provided"});
+  if (!req.body.owner_id) {
+    return res.status(422).json({ errors: "Owner of provider must be provided"});
   }
-  const type = req.body.type;
+  if (!req.body.contact_no) {
+    return res.status(422).json({ errors: "Contact Number of provider must be provided"});
+  }
+  if (!req.body.category) {
+    return res.status(422).json({ errors: "Category of provider must be provided"});
+  }
+  if (!req.body.sub_category) {
+    return res.status(422).json({ errors: "Sub Category of provider must be provided"});
+  }
+  if (!req.body.queue_capacity) {
+    return res.status(422).json({ errors: "Queue Capacity of provider must be provided"});
+  }
+  if (!req.body.location) {
+    return res.status(422).json({ errors: "Location of provider must be provided"});
+  }
+  if (!req.body.password) {
+    return res.status(422).json({ errors: "Password of provider must be provided"});
+  }
+  // ------
+
+  // Provider details
+  // -----
   const name = req.body.name;
-  const description = req.body.description || '';
-  const userID = req.body.userID || '';
-  const quantity = req.body.quantity || 1;
-  const location = req.body.location || '';
-  const contact = req.body.contact;
+  const owner_id = req.body.owner_id;
+  const contact_no = req.body.contact_no;
+  const category = req.body.category;
+  const sub_category = req.body.sub_category;
+  const queue_capacity = req.body.queue_capacity
+  const current_queue = 1;
+  const location = req.body.location;
+
+  //base64 encoding
+  const buff = new Buffer(req.body.password);
+  const password = buff.toString('base64');
+  // -----
 
   cloudant
-    .create(type, name, description, quantity, location, contact, userID)
+    .create(name, owner_id, contact_no, category, sub_category, queue_capacity, current_queue, location, password)
     .then(data => {
       if (data.statusCode != 201) {
         res.sendStatus(data.statusCode)
