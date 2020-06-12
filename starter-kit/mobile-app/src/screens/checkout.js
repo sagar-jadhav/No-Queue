@@ -88,7 +88,7 @@ const Checkout = (props) => {
 
     checkout(payload)
       .then(() => {
-        Alert.alert('Yay!', 'You have been checked out.', [{text: 'OK', onPress: () => {props.navigation.navigate('Home');}}]);
+        Alert.alert('Yay!', 'You have been checked out.', [{text: 'OK', onPress: () => {props.navigation.navigate('Search Shop');}}]);
         setItem({ ...clearItem });
       })
       .catch(err => {
@@ -108,7 +108,7 @@ const Checkout = (props) => {
         onSubmitEditing={sendItem}
         returnKeyType='send'
         enablesReturnKeyAutomatically={true}
-        placeholder='user@domain.com'
+        placeholder='Enter Token here'
       />
     
       {

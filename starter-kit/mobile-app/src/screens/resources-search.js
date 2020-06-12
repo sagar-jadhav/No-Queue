@@ -43,6 +43,16 @@ const styles = StyleSheet.create({
     textAlign:'center',
     marginTop: 15
   },
+  buttonSmall: {
+    backgroundColor: '#32CD32',
+    color: '#FFFFFF',
+    fontFamily: 'IBMPlexSans-Medium',
+    fontSize: 14,
+    overflow: 'hidden',
+    padding: 10,
+    textAlign:'center',
+    marginTop: 12
+  },
   searchResultText: {
     fontFamily: 'IBMPlexSans-Bold',
     padding: 10,
@@ -94,13 +104,13 @@ const SearchResources = function ({ route, navigation }) {
         </View>
         <View style={styles.itemView}>
           <TouchableOpacity onPress={bookMySlot}>
-            <Text style={styles.button}>Book</Text>
+            <Text style={styles.buttonSmall}>Book</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {navigation.navigate('Checkin', props);}}>
-            <Text style={styles.button}>Check-in</Text>
+            <Text style={styles.buttonSmall}>Check-in</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {navigation.navigate('Checkout', props);}}>
-            <Text style={styles.button}>Check-out</Text>
+            <Text style={styles.buttonSmall}>Check-out</Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>

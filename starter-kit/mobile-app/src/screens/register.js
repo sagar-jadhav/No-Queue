@@ -84,8 +84,7 @@ const Register = function ({ navigation }) {
   const category = [{ label: 'EatOuts', value: 'eatouts', items: [{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'}] },
   { label: 'Stores', value: 'stores', items: [{label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'}] },
   { label: 'Services', value: 'Services', items:[{label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}] }];
-  const sub_category = [{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
- {label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'},
+  const sub_category = [{label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'},{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
   {label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}];
   const itemSelected = {};
   React.useEffect(() => {
