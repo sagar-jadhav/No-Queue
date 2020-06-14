@@ -262,10 +262,92 @@ function info() {
         });
 };
 
+function updateInQueue(id, in_queue) {
+    return new Promise((resolve, reject) => {
+        db.get(id, (err, document) => {
+            if (err) {
+                resolve({statusCode: err.statusCode});
+            } else {
+                let item = {
+                    _id: document._id,
+                    _rev: document._rev,            // Specifiying the _rev turns this into an update
+                }
+                
+                item["name"] = document.name;
+                item["owner_id"] = document.owner_id;
+                item["contact_no"] = document.contact_no;
+                item["category"] = document.category;
+                item["sub_category"] = document.sub_category;
+                item["serving_capacity"] = document.serving_capacity;
+                item["in_queue"] = in_queue;
+                item["in_store"] = document.in_store; 
+                item["marker"] = document.marker;
+                item["location"] = document.location;
+                item["password"] = document.password;
+                
+ 
+                db.insert(item, (err, result) => {
+                    if (err) {
+                        console.log('Error occurred: ' + err.message, 'create()');
+                        reject(err);
+                    } else {
+                        resolve({ data: { updatedRevId: result.rev, name: document.name }, statusCode: 200 });
+                    }
+                });
+            }            
+        })
+    });
+};
+
+function updateServingCapacityAndPolicy(id, enforce_policy, serving_capacity) {
+    console.log(id);
+    return new Promise((resolve, reject) => {
+        db.get(id, (err, document) => {
+            if (err) {
+                console.log(err);
+                reject(err);
+            } else {
+                let item = {
+                    _id: document._id,
+                    _rev: document._rev,            // Specifiying the _rev turns this into an update
+                }
+                
+                item["name"] = document.name;
+                item["owner_id"] = document.owner_id;
+                item["contact_no"] = document.contact_no;
+                item["category"] = document.category;
+                item["sub_category"] = document.sub_category;
+                item["serving_capacity"] = serving_capacity;
+                item["in_queue"] = document.in_queue;
+                item["in_store"] = document.in_store; 
+                item["marker"] = document.marker;
+                item["location"] = document.location;
+                item["password"] = document.password;
+                item["zone"] = "RED";
+                
+                if (enforce_policy) {
+                    item["enforced_policy"] = enforce_policy;
+                }
+                
+                db.insert(item, (err, result) => {
+                    if (err) {
+                        console.log('Error occurred: ' + err.message, 'create()');
+                        reject(err);
+                    } else {
+                        resolve({ data: { updatedRevId: result.rev }, statusCode: 200 });
+                    }
+                });
+            }            
+        })
+    });
+};
+
 module.exports = {
     deleteById: deleteById,
     create: create,
     update: update,
     find: find,
-    info: info
+    info: info,
+    updateInQueue: updateInQueue,
+    updateServingCapacityAndPolicy: updateServingCapacityAndPolicy
   };

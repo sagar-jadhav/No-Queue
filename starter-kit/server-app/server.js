@@ -8,6 +8,13 @@ const port = process.env.PORT || 3000
 
 const cloudant = require('./lib/cloudant.js');
 
+var multer = require('multer');
+var fs = require('fs');
+var FormData = require('form-data');
+var axios = require('axios');
+
+const geolib = require('geolib');
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -356,6 +363,144 @@ app.post('/api/resource/checkout', (req, res) => {
         res.sendStatus(data.statusCode)
       } else {
         res.send(data.data)
+      }
+    })
+    .catch(err => handleError(res, err));
+});
+
+var storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    var dir = './uploads';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    callback(null, dir);
+  },
+  filename: function (req, file, callback) {
+    let fileN = Date.now() + '.' + file.originalname;
+    callback(null, fileN);
+  }
+});
+
+var upload = multer({ storage: storage });
+var type = upload.single('image_file');
+
+app.post('/getHeadCount', type, function (req, res) {
+  let file = {
+    localPath: './uploads/' + req.file.filename,
+    name: req.file.filename,
+    threshold: process.env.THRESHOLD,
+    id: req.body.id
+  };
+
+  var data = new FormData();
+  data.append('images_file', fs.createReadStream(file.localPath));
+  data.append('collection_ids', '59e65168-d7a6-4c39-9613-523a07d45412');
+  data.append('features', 'objects');
+  data.append('threshold', file.threshold);
+
+  var URL = process.env.IMAGE_ANALYZE_URL;
+  var token = 'Basic ' + Buffer.from('apikey' + ':' + process.env.IMAGE_ANALYZE_API_KEY).toString('base64');
+
+  axios.post(URL, data, {
+    headers: {
+      'accept': 'application/json',
+      'Accept-Language': 'en-US,en;q=0.8',
+      'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+      'Authorization': token,
+    }
+  })
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+      let headCounts = response.data.images[0].objects.collections[0].objects.length;
+
+      cloudant
+        .updateInQueue(file.id, headCounts)
+        .then(data => {
+          if (data.statusCode != 200) {
+            res.sendStatus(data.statusCode);
+          } else {
+            let message = {
+              id: file.id,
+              head_counts: headCounts,
+              shop_name: data.data.name
+            }
+            return res.send(message);
+          }
+        })
+        .catch(err => handleError(res, err));
+    }).catch((error) => {
+      console.error(error);
+      handleError(res, err);
+    });
+});
+
+var isInCorridor = (geo_corridor, geo_point) => {
+  return geolib.isPointWithinRadius({
+    latitude: geo_corridor.latitude,
+    longitude: geo_corridor.longitude
+  }, {
+    latitude: geo_point.latitude,
+    longitude: geo_point.longitude
+  },
+    geo_corridor.radius);
+};
+
+app.post('/enforcePolicy', type, function (req, res) {
+  //Policy
+  let policy = {
+    "policy_name": req.body.policy_name,
+    "policy_rule": {
+      "capacity": req.body.policy_rule.capacity
+    },
+    "zone": {
+      "latitude": req.body.zone.latitude,
+      "longitude": req.body.zone.longitude,
+      "radius": req.body.zone.radius
+    }
+  };
+
+  //Geo Corridor
+  let geo_corridor = {
+    latitude: policy.zone.latitude,
+    longitude: policy.zone.longitude,
+    radius: policy.zone.radius
+  };
+
+  let shopsAffected = [];
+
+  cloudant
+    .find('', '', '', '')
+    .then(data => {
+      if (data.statusCode != 200) {
+        res.sendStatus(data.statusCode)
+      } else {
+        let vendors = JSON.parse(data.data);
+        var promises = [];
+
+        for (let index = 0; index < vendors.length; index++) {
+          let coordinates = vendors[index].location.split(',');
+
+          let geo_point = {
+            latitude: coordinates[0],
+            longitude: coordinates[1]
+          };
+
+          if (isInCorridor(geo_corridor, geo_point)) {
+            let capacity = Math.floor(vendors[index].serving_capacity * policy.policy_rule.capacity);
+
+            promises.push(cloudant.updateServingCapacityAndPolicy(vendors[index]._id, policy, capacity));
+            shopsAffected.push(vendors[index].name);
+          }
+        }
+
+        Promise.all(promises)
+          .then(() => {
+            return res.send({ shops_affected: shopsAffected, count: shopsAffected.length });
+          })
+          .catch((e) => {
+            return handleError(res, err);
+          });
       }
     })
     .catch(err => handleError(res, err));

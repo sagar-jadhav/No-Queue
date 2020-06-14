@@ -8,10 +8,14 @@
   },
   "dependencies": {
     "@cloudant/cloudant": "^4.2.4",
+    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "ibm-watson": "^5.4.0"
+    "form-data": "^3.0.0",
+    "geolib": "^3.3.1",
+    "ibm-watson": "^5.4.0",
+    "multer": "^1.4.2"
   },
   "homepage": "https://github.com/Call-for-Code/Solution-Starter-Kit-Cooperation-2020#readme",
   "repository": {
