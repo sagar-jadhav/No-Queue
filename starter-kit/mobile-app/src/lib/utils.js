@@ -15,11 +15,11 @@ export const userID = () => {
 }
 
 export const search = (query) => {
-  const type = query.type ? `type=${query.type}` : ''
-  const name = query.name ? `name=${query.name}` : ''
-  const userID = query.userID ? `userID=${query.userID}` : ''
-
-  return fetch(`${serverUrl}/api/resource?${name}&${type}&${userID}`, {
+  const type = query.category ? `category=${query.category}` : ''
+  const subtype = query.sub_category ? `sub_category=${query.sub_category}` : ''
+  const name = query.name ? `name=${query.name}` : ' '
+  console.log(query, 'query', `${serverUrl}/api/resource?${name}&${type}&${subtype}`);
+  return fetch(`${serverUrl}/api/resource?${name}&${type}&${subtype}`, {
     method: 'GET',
     mode: 'no-cors',
     cache: 'no-cache',
@@ -37,6 +37,24 @@ export const search = (query) => {
 
 export const add = (item) => {
   return fetch(`${serverUrl}/api/resource`, {
+    method: 'POST',
+    mode: 'no-cors',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(item)
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(response.statusText || response.message || response.status);
+    } else {
+      return response.json();
+    }
+  });
+};
+
+export const login = (item) => {
+  return fetch(`${serverUrl}/api/resource/login`, {
     method: 'POST',
     mode: 'no-cors',
     cache: 'no-cache',
@@ -112,5 +130,41 @@ export const message = (payload) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(payload)
+  });
+};
+
+export const checkin = (payload) => {
+  return fetch(`${serverUrl}/api/resource/checkin`, {
+    method: 'POST',
+    mode: 'no-cors',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(response.statusText || response.message || response.status);
+    } else {
+      return response.json();
+    }
+  });
+};
+
+export const checkout = (payload) => {
+  return fetch(`${serverUrl}/api/resource/checkout`, {
+    method: 'POST',
+    mode: 'no-cors',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(response.statusText || response.message || response.status);
+    } else {
+      return response.json();
+    }
   });
 };

@@ -43,6 +43,16 @@ const styles = StyleSheet.create({
     textAlign:'center',
     marginTop: 15
   },
+  buttonSmall: {
+    backgroundColor: '#32CD32',
+    color: '#FFFFFF',
+    fontFamily: 'IBMPlexSans-Medium',
+    fontSize: 14,
+    overflow: 'hidden',
+    padding: 10,
+    textAlign:'center',
+    marginTop: 12
+  },
   searchResultText: {
     fontFamily: 'IBMPlexSans-Bold',
     padding: 10,
@@ -80,7 +90,7 @@ const styles = StyleSheet.create({
 });
 
 const SearchResources = function ({ route, navigation }) {
-  const [query, setQuery] = React.useState({ type: 'Food', name: '' });
+  const [query, setQuery] = React.useState({ category: 'EatOuts', sub_category: '', name: '' });
   const [items, setItems] = React.useState([]);
   const [info, setInfo] = React.useState('');
 
@@ -90,11 +100,26 @@ const SearchResources = function ({ route, navigation }) {
           onPress={() => { navigation.navigate('Map', { item: props }); }}>
         <View style={styles.itemView}>
           <Text style={styles.itemName}>{props.name}</Text>
-          <Text style={styles.itemQuantity}> ( {props.quantity} ) </Text>
+          <Text style={styles.itemQuantity}> ( {props.in_store} / {props.serving_capacity} ) [{props.in_queue}] </Text>
         </View>
-        <Text style={styles.itemDescription}>{props.description}</Text>
+        <View style={styles.itemView}>
+          <TouchableOpacity onPress={bookMySlot}>
+            <Text style={styles.buttonSmall}>Book</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {navigation.navigate('Checkin', props);}}>
+            <Text style={styles.buttonSmall}>Check-in</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {navigation.navigate('Checkout', props);}}>
+            <Text style={styles.buttonSmall}>Check-out</Text>
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
     );
+  };
+
+  const bookMySlot = () => {
+    let message = 'Your booking token is ' + Math.floor(1000 + Math.random() * 9000);
+    Alert.alert('Thank you!', message, [{text: 'OK', onPress: () => {navigation.navigate('Search');}}]);
   };
 
   const searchItem = () => {
@@ -106,6 +131,7 @@ const SearchResources = function ({ route, navigation }) {
       .then((results) => {
         setInfo(`${results.length} result(s)`)
         setItems(results);
+        console.log(payload);
       })
       .catch(err => {
         console.log(err);
@@ -120,11 +146,24 @@ const SearchResources = function ({ route, navigation }) {
         <PickerSelect
           style={{ inputIOS: styles.selector }}
           value={query.type}
-          onValueChange={(t) => setQuery({ ...query, type: t })}
+          onValueChange={(t) => setQuery({ ...query, category: t })}
           items={[
-              { label: 'Food', value: 'Food' },
-              { label: 'Help', value: 'Help' },
-              { label: 'Other', value: 'Other' }
+              { label: 'EatOuts', value: 'eatouts' },
+              { label: 'Stores', value: 'stores' },
+              { label: 'Services', value: 'services' }
+          ]}
+        />
+        <Text style={styles.label}>Sub-Type</Text>
+        <PickerSelect
+          style={{ inputIOS: styles.selector }}
+          value={query.subtype}
+          onValueChange={(t) => setQuery({ ...query, sub_category: t })}
+          items={[
+              { label: 'General Stores', value: 'general_stores' },
+              { label: 'Medical Stores', value: 'medical_stores' },
+              {label: 'Liquor Stores', value: 'liquor_stores'},
+              {label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
+              {label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}
           ]}
         />
         <Text style={styles.label}>Name</Text>
@@ -135,7 +174,7 @@ const SearchResources = function ({ route, navigation }) {
           onSubmitEditing={searchItem}
           returnKeyType='send'
           enablesReturnKeyAutomatically={true}
-          placeholder='e.g., Tomotatoes'
+          placeholder='e.g., Medical'
           blurOnSubmit={false}
         />
         <TouchableOpacity onPress={searchItem}>

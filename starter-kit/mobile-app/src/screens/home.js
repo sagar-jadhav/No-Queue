@@ -6,21 +6,22 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF'
   },
   scroll: {
     paddingLeft: 20,
     paddingRight: 20,
     paddingBottom: 25,
-    paddingTop: 75
+    paddingTop: 50
   },
   image: {
-    alignSelf: 'flex-start',
-    height: '20%',
-    width:'50%',
-    resizeMode: 'contain'
+    alignSelf: 'center',
+    height: 370,
+    width: 370,
+    resizeMode: 'stretch',
+    paddingTop: 0
   },
   title: {
     fontFamily: 'IBMPlexSans-Medium',
@@ -45,15 +46,18 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   buttonGroup: {
-    flex: 1,
+    flex: 2,
     paddingTop: 15,
-    width: 175
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: 165,
+    alignSelf: 'center',
   },
   button: {
     backgroundColor: '#1062FE',
     color: '#FFFFFF',
     fontFamily: 'IBMPlexSans-Medium',
-    fontSize: 16,
+    fontSize: 14,
     overflow: 'hidden',
     padding: 12,
     textAlign:'center',
@@ -61,16 +65,17 @@ const styles = StyleSheet.create({
   }
 });
 
-const Home = () => (
+
+const Home = ({navigation}) => (
   <View style={styles.center}>
     <ScrollView style={styles.scroll}>
       <Image
         style={styles.image}
-        source={require('../images/2020-cfc-512.png')}
+        source={require('../images/image.png')}
       />
-      <Text style={styles.subtitle}>Starter Kit</Text>
-      <Text style={styles.title}>Community Collaboration</Text>
-      <Text style={styles.content}>
+      {/* <Text style={styles.subtitle}>Why wait in Queue ?</Text> */}
+      {/* <Text style={styles.title}>Kueue</Text> */}
+      {/* <Text style={styles.content}>
         There is a growing interest in enabling communities to cooperate among
         themselves to solve problems in times of crisis, whether it be to
         advertise where supplies are held, offer assistance for collections, or
@@ -85,13 +90,15 @@ const Home = () => (
         server-side components, that serves as the basis for developers to build
         out a community cooperation application that addresses local needs for
         food, equipment, and resources.
-      </Text>
+      </Text> */}
       <View style={styles.buttonGroup}>
-        <TouchableOpacity onPress={() => Linking.openURL('https://developer.ibm.com/callforcode')}>
-          <Text style={styles.button}>Learn more</Text>
+        <TouchableOpacity onPress={() => {navigation.navigate('Login');}}>
+          <Text style={styles.button}>Login for Vendor</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL('https://github.com/Call-for-Code/Solution-Starter-Kit-Cooperation-2020')}>
-          <Text style={styles.button}>Get the code</Text>
+      </View>
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity onPress={() => {navigation.navigate('Register');}}>
+          <Text style={styles.button}>Register for Vendor</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

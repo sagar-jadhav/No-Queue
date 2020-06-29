@@ -15,8 +15,12 @@ import AddResource from './src/screens/resource-add';
 import EditResource from './src/screens/resource-edit';
 import MyResources from './src/screens/resources-my';
 import Map from './src/screens/map';
+import Login from './src/screens/login';
+import Register from './src/screens/register';
+import Checkin from './src/screens/checkin';
+import Checkout from './src/screens/checkout'
 
-import { HomeIcon, DonateIcon, SearchIcon } from './src/images/svg-icons';
+import { HomeIcon, DonateIcon, SearchIcon, MapIcon } from './src/images/svg-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -60,16 +64,23 @@ const TabLayout = () => (
     tabBarOptions={tabBarOptions} >
     <Tab.Screen
       name='Home'
-      component={Home}
+      component={HomeStackLayout}
       options={{
         tabBarIcon: ({color}) => (<HomeIcon fill={color}/>)
       }}
     />
-    <Tab.Screen
-      name='Donate'
+    {/* <Tab.Screen
+      name='List'
       component={DonateStackLayout}
       options={{
         tabBarIcon: ({color}) => (<DonateIcon fill={color} />)
+      }}
+    /> */}
+    <Tab.Screen
+      name='Map'
+      component={MapStackLayout}
+      options={{
+        tabBarIcon: ({color}) => (<MapIcon fill={color} />)
       }}
     />
     <Tab.Screen
@@ -82,11 +93,28 @@ const TabLayout = () => (
   </Tab.Navigator>
 );
 
+const HomeStackLayout = () => (
+  <Stack.Navigator>
+  <Stack.Screen name='Home' component={Home} />
+    <Stack.Screen name='Login' component={Login} />
+    <Stack.Screen name='Register' component={Register} />
+    <Stack.Screen name='Checkin' component={Checkin} />
+    <Stack.Screen name='Checkout' component={Checkout} />
+  </Stack.Navigator>
+);
+
 const DonateStackLayout = () => (
   <Stack.Navigator>
-  <Stack.Screen name='My Donations' component={MyResources} options={DonationsStackOptions} />
+  <Stack.Screen name='My List' component={MyResources} options={DonationsStackOptions} />
     <Stack.Screen name='Add Donation' component={AddResource} />
-    <Stack.Screen name='Edit Donation' component={EditResource} />
+    <Stack.Screen name='Edit List' component={EditResource} />
+  </Stack.Navigator>
+);
+
+const MapStackLayout = () => (
+  <Stack.Navigator>
+  <Stack.Screen name='Map' component={Map} />
+    <Stack.Screen name='Search Near me' component={Map} />
   </Stack.Navigator>
 );
 

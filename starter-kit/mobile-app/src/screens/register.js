@@ -76,16 +76,15 @@ const styles = StyleSheet.create({
   }
 });
 
-const AddResource = function ({ navigation }) {
+const Register = function ({ navigation }) {
   const clearItem = { userID: userID(), category: 'EatOuts', sub_category: '' , name: '', description: '', location: '', owner_id: '', contact_no: '', password: '', queue_capacity: '1' }
   const [item, setItem] = React.useState(clearItem);
   const [useLocation, setUseLocation] = React.useState(true);
   const [position, setPosition] = React.useState({})
-  const category = [{ label: 'EatOuts', value: 'EatOuts', items: [{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'}] },
-  { label: 'Stores', value: 'Stores', items: [{label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'}] },
+  const category = [{ label: 'EatOuts', value: 'eatouts', items: [{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'}] },
+  { label: 'Stores', value: 'stores', items: [{label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'}] },
   { label: 'Services', value: 'Services', items:[{label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}] }];
-  const sub_category = [{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
- {label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'},
+  const sub_category = [{label: 'Medical Stores', value: 'medical_stores'}, {label: 'General Stores', value: 'general_stores'}, {label: 'Liquor Stores', value: 'liquor_stores'},{label: 'Restaurant', value: 'restaurant'}, {label: 'Ice Cream Parlours', value: 'ice_cream'},
   {label: 'Garage Service', value: 'garage_service'}, {label: 'Petrol Pump', value: 'petrol_pump'},{label: 'Pathology', value: 'pathology'}];
   const itemSelected = {};
   React.useEffect(() => {
@@ -113,25 +112,17 @@ const AddResource = function ({ navigation }) {
     setUseLocation(!useLocation);
   };
 
-  const setItemSelected = () => {
-    if (!useLocation && position) {
-    setItem({
-      ...item,
-      location: `${position.coords.latitude},${position.coords.longitude}`,
-      itemSelected: item
-    })
-  }
-  };
-
   const sendItem = () => {
     const payload = {
       ...item,
-      queue_capacity: isNaN(item.queue_capacity) ? 1 : parseInt(item.queue_capacity)
+      queue_capacity: isNaN(item.queue_capacity) ? 1 : parseInt(item.queue_capacity),
+      contact_no: '1234567890'
     };
 
     add(payload)
-      .then(() => {
-        Alert.alert('Thank you!', 'Your item has been added.', [{text: 'OK'}]);
+      .then(res => {
+        console.log(res, 'res');
+        Alert.alert('Thank you!', 'Your Shop has been added.', [{text: 'OK', onPress: () => {navigation.navigate('Map', { item: res });}}]);
         setItem({ ...clearItem, location: payload.location });
       })
       .catch(err => {
@@ -165,8 +156,8 @@ const AddResource = function ({ navigation }) {
           <Text style={styles.label}>Serving Capacity</Text>
           <TextInput
             style={styles.textInput}
-            value={item.queue_capacity}
-            onChangeText={(t) => setItem({ ...item, quantity: t})}
+            value={item.serving_capacity}
+            onChangeText={(t) => setItem({ ...item, serving_capacity: t})}
             onSubmitEditing={sendItem}
             returnKeyType='send'
             enablesReturnKeyAutomatically={true}
@@ -199,7 +190,7 @@ const AddResource = function ({ navigation }) {
         placeholder='e.g., Tomotatoes'
         blurOnSubmit={false}
       />
-      <Text style={styles.label}>User ID</Text>
+      <Text style={styles.label}>Email ID</Text>
       <TextInput
         style={styles.textInput}
         value={item.owner_id}
@@ -209,16 +200,6 @@ const AddResource = function ({ navigation }) {
         enablesReturnKeyAutomatically={true}
         placeholder='user@domain.com'
       />
-      <Text style={styles.label}>Contact</Text>
-      <TextInput
-        style={styles.textInput}
-        value={item.contact_no}
-        onChangeText={(t) => setItem({ ...item, contact_no: t})}
-        onSubmitEditing={sendItem}
-        returnKeyType='send'
-        enablesReturnKeyAutomatically={true}
-        placeholder='+91 123456789'
-      />
       <Text style={styles.label}>Password</Text>
       <TextInput
         style={styles.textInput}
@@ -227,8 +208,19 @@ const AddResource = function ({ navigation }) {
         onSubmitEditing={sendItem}
         returnKeyType='send'
         enablesReturnKeyAutomatically={true}
-        placeholder='e.g., Passw0rd'
+        secureTextEntry={true}
+        placeholder='Enter Password'
       />
+      {/* <Text style={styles.label}>Contact</Text>
+      <TextInput
+        style={styles.textInput}
+        value={item.contact_no}
+        onChangeText={(t) => setItem({ ...item, contact_no: t})}
+        onSubmitEditing={sendItem}
+        returnKeyType='send'
+        enablesReturnKeyAutomatically={true}
+        placeholder='+91 123456789'
+      /> */}
       {/* <Text style={styles.label}>Description</Text>
       <TextInput
         style={styles.textInput}
@@ -275,4 +267,4 @@ const AddResource = function ({ navigation }) {
   );
 };
 
-export default AddResource;
+export default Register;
